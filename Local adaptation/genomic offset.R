@@ -1,20 +1,18 @@
 setwd("/Ro/GEA/GF")
 .libPaths("D:/R/R-4.3.1/library")
 
-clim.pop.points <- read.table("./input_file/clim.pop.points",sep= "\t",header=T)
 library(vcfR)
 library(adegenet)
 library(hierfstat)
 library(gradientForest)
-
-clim.points <-  read.table("./clim.points",sep="\t",header=T)
-pr.env<-clim.points
+library(sf)
 
 pr.vcf <- read.table("./input_file/adap_freq_pr.txt")
+clim.pop.points <- read.table("./input_file/clim.pop.points",sep= "\t",header=T)
 
+# Climate data
 clim.list <- dir("./input_file/clim_data/", full.names=T, pattern='.tif')
 clim.layer <- stack(clim.list)
-library(sf)
 extent <- c(+70, +130, 28, 55)
 clim.layer.crop <- crop(clim.layer, extent)
 shp_proj <- st_transform(shp, crs=crs(clim.layer.crop))
@@ -111,7 +109,7 @@ genetic.offset <- sqrt((pred.future[,1]-pred[,1])^2 + (pred.future[,2]-pred[,2])
                        (pred.future[,19]-pred[,19])^2)
 
 #Define raster properties
-rast.offset <- clim.future.mask$bio12
+rast.offset <- clim.future.mask$bio8
 
 #Assign genetic offset values (difference between future and present predictions) to raster
 rast.offset[clim.land.future$ID] <- genetic.offset
