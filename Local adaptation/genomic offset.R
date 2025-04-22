@@ -1,2 +1,140 @@
-setwd("//GEA/GF")
+setwd("/Ro/GEA/GF")
 .libPaths("D:/R/R-4.3.1/library")
+
+clim.pop.points <- read.table("./input_file/clim.pop.points",sep= "\t",header=T)
+library(vcfR)
+library(adegenet)
+library(hierfstat)
+library(gradientForest)
+
+clim.points <-  read.table("./clim.points",sep="\t",header=T)
+pr.env<-clim.points
+
+pr.vcf <- read.table("./input_file/adap_freq_pr.txt")
+
+clim.list <- dir("./input_file/clim_data/", full.names=T, pattern='.tif')
+clim.layer <- stack(clim.list)
+library(sf)
+extent <- c(+70, +130, 28, 55)
+clim.layer.crop <- crop(clim.layer, extent)
+shp_proj <- st_transform(shp, crs=crs(clim.layer.crop))
+clim.layer.mask <- mask(clim.layer.crop, shp_proj, inverse = FALSE)
+
+env.gf <- clim.pop.points
+maxLevel <- log2(0.368*nrow(env.gf)/2)
+gf <- gradientForest(cbind(env.gf, freq_pr), predictor.vars=colnames(env.gf), 
+                     response.vars=colnames(freq_pr), 
+                     ntree=500, 
+                     maxLevel=maxLevel, 
+                     trace=T, 
+                     corr.threshold=0.50)
+saveRDS(gf, "./output_file/gf.RDS") 
+
+by.importance <- names(importance(gf))
+
+# Variable importance
+pdf("./ouput_file/GF_VariableImportance.pdf")
+plot(gf, plot.type = "O")
+dev.off()
+# Turnover function
+pdf("./ouput_file/GF_TurnoverFunctions.pdf")
+plot(gf, plot.type = "C", imp.vars = by.importance, show.species = F, common.scale = T, cex.axis = 1, cex.lab = 1.2, line.ylab = 1, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(2.5, 2, 2, 2), omi = c(0.2, 0.3, 0.2, 0.4)))
+dev.off()
+# SNP Turnover function
+pdf("./pictures/GF_TurnoverFunctions_bySNP.pdf")
+plot(gf, plot.type = "C", imp.vars = by.importance, show.overall = F, legend = T, leg.posn = "topleft", leg.nspecies = 5, cex.lab = 0.7, cex.legend = 0.4, cex.axis = 0.6, line.ylab = 0.9, par.args = list(mgp = c(1.5, 0.5, 0), mar = c(2.5, 1, 0.1, 0.5), omi = c(0, 0.3, 0, 0)))
+dev.off()
+
+clim.land <- extract(clim.layer.mask, 1:ncell(clim.layer.mask), df = TRUE)
+clim.land <- na.omit(clim.land)
+
+# The predict() function is used to predict the allele turnover of the entire landscape.
+pred <- predict(gf, clim.land[,-1])
+pca <- prcomp(pred, center = T, scale. = FALSE)
+#Assign PCs to colors
+r <- pca$x[, 1]
+g <- pca$x[, 2]
+b <- pca$x[, 3]
+r <- (r - min(r))/(max(r) - min(r)) * 255  # Scale colors
+g <- (g - min(g))/(max(g) - min(g)) * 255
+b <- (b - min(b))/(max(b) - min(b)) * 255
+mask <- clim.layer.mask$bio12  # Define raster properties with existing one
+rastR <- rastG <- rastB <- mask # Assign color to raster
+rastR[clim.land$ID] <- r
+rastG[clim.land$ID] <- g
+rastB[clim.land$ID] <- b
+rgb.rast <- stack(rastR, rastG, rastB)
+
+#pcplot
+nvs <- dim(pca$rotation)[1] # number of variables
+vec <- c("bio8","bio12","bio15")
+lv <- length(vec)
+vind <- rownames(pca$rotation) %in% vec
+scal <- 60
+xrng <- range(pca$x[,1], pca$rotation[,1]/scal)*1.1
+yrng <- range(pca$x[,2], pca$rotation[,2]/scal)*1.1
+
+pdf(file="./results_100k_newshp/dfmod_raster_bio81215/PCplot.pdf")
+plot((pca$x[,1:2]), xlim=xrng, ylim=yrng, pch=".", cex=5, col=rgb(r,g,b, max = 255), asp=1)
+arrows(rep(0,lv), rep(0,lv), pca$rotation[,1]/4, pca$rotation[,2]/4, length = 0.04)
+jit <- 0.01
+text(pca$rotation[c(8,12,15),1]/4+jit*sign(pca$rotation[c(15,8,12),1]), 
+     pca$rotation[c(8,12,15),2]/4+jit*sign(pca$rotation[c(8,12,15),2]), 
+     labels = vec)
+dev.off()
+
+#GF_map
+pdf("./output_file/GF_Map_coor.pdf")
+plot(NULL, xlim = c(72, 127.5), ylim = c(25.5, 55),
+     xlab = "Longitude", ylab = "Latitude")
+plotRGB(rgb.rast, bgalpha = 1, add = TRUE, col = "lightgrey")
+points(clim.pop.points$longitude, clim.pop.points$latitude)
+dev.off()
+
+clim.future <- stack("./input_file/clim_future/BCC370_2100.tif") 
+extent <- c(+70, +130, 28, 55)
+clim.future.crop <- crop(clim.future, extent)
+shp_proj <- st_transform(shp, crs=crs(clim.future.crop))
+clim.future.mask <- mask(clim.future.crop, shp_proj, inverse = FALSE)
+
+clim.land.future <- na.omit(extract(clim.future.mask, 1:ncell(clim.future.mask), df = TRUE))
+pred.future <- predict(gf, clim.land.future[,-1])
+genetic.offset <- sqrt((pred.future[,1]-pred[,1])^2 + (pred.future[,2]-pred[,2])^2 + 
+                       (pred.future[,3]-pred[,3])^2 + (pred.future[,4]-pred[,4])^2 + 
+                       (pred.future[,5]-pred[,5])^2 + (pred.future[,6]-pred[,6])^2 + 
+                       (pred.future[,7]-pred[,7])^2 + (pred.future[,8]-pred[,8])^2 + 
+                       (pred.future[,9]-pred[,9])^2 + (pred.future[,10]-pred[,10])^2 + 
+                       (pred.future[,11]-pred[,11])^2 + (pred.future[,12]-pred[,12])^2 + 
+                       (pred.future[,13]-pred[,13])^2 + (pred.future[,14]-pred[,14])^2 + 
+                       (pred.future[,15]-pred[,15])^2 + (pred.future[,16]-pred[,16])^2 + 
+                       (pred.future[,17]-pred[,17])^2 + (pred.future[,18]-pred[,18])^2 + 
+                       (pred.future[,19]-pred[,19])^2)
+
+#Define raster properties
+rast.offset <- clim.future.mask$bio12
+
+#Assign genetic offset values (difference between future and present predictions) to raster
+rast.offset[clim.land.future$ID] <- genetic.offset
+
+rf <- writeRaster(rast.offset, filename=r"(./output_file/rast.offset_BCC370_2100.tif)", format="GTiff", overwrite=TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
