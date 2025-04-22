@@ -1,3 +1,4 @@
+#genomic offset in gradientForest
 setwd("/Ro/GEA/GF")
 .libPaths("D:/R/R-4.3.1/library")
 
