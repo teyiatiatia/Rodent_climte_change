@@ -26,21 +26,20 @@ library(sf)
 elevslop <- raster("D:/inputfile/elev_slop.asc")
 ai <- raster("D:/inputfile/ai.asc")
 bio12 <- raster("D:/inputfile/bio12.asc")
-#图层可以裁剪到固定区域
+
 extent <- c(+70, +130, 25, 55)
 elevslop <- crop(elevslop, extent)
 ai <- crop(ai, extent)
 bio12 <- crop(bio12, extent)
-
-#将图层变量叠加在一起
+# Stack the variables
 all_surface <- stack(elevslop,ai,bio12)
 
-#载入采样点坐标信息和样点之间的遗传距离，遗传距离是样点之间的fst值矩阵，可以在hierfstat R包中利用vcf文件生成。
+# The coordinate of sample locations and genetic dstance matrix (Fst).
 samples<-read.table("D:/inputfile/samples.txt",header=T,row.names = 1, stringsAsFactors=F)
 sample.locales <- SpatialPoints(samples[, c(1, 2)])
 fst <- read.table("D:/inputfile/popFst.txt", header=T,row.names = 1, stringsAsFactors=F)
 
-#多线程
+# Multithreading
 cl <- makePSOCKcluster(6)
 registerDoParallel(cl)
 
