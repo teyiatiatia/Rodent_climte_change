@@ -1,5 +1,6 @@
 # RDA plot of climate-associated SNPs screened fromLFMM and RDA. take P. roborovskii as an example
 setwd("D:/Ro/GEA/RDA_plot/")
+.libPaths("D:/R/R-4.3.1/library")
 library(vegan)
 library("data.table")
 library(vcfR)
@@ -37,8 +38,8 @@ colnames(grp) <- "group"
 ggplot() +
   geom_point(data = st,aes(RDA1,RDA2,shape=grp$group,fill=grp$group,color = grp$group),size=7)+ 
   scale_shape_manual(values = c(21,21,21,21,21))+
-  scale_color_manual(labels = c("PRDB","PRML","PRQH","PRHL","PRNJ"),
-                     breaks = c("PRDB","PRML","PRQH","PRHL","PRNJ"),
+  scale_color_manual(labels = c("DB","ML","QH","HL","NJ"),
+                     breaks = c("DB","ML","QH","HL","NJ"),
                      values = c("HL"="black", "ML"="black", "QH"="black", "NJ"="black", "DB"="black"),
                      guide = "legend",) +
   scale_fill_manual(values = c("HL"="#31646c", "ML"="#d49c87", "QH"="#96b89b", "NJ"="#20364f", "DB"="#ecd9cf"))+
