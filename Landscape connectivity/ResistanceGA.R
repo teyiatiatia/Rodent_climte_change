@@ -1,28 +1,20 @@
-# Windows
-julia
-using Pkg
-using RCall  #download RCall
-Pkg.build("RCall")
-Pkg.add("Circuitscape")
-
-# R
+#R code for assessing landscape connectivity, taking three variables as an example in P. roborovskii
 setwd("/Ro/GEA/ResistanceGA/")
 .libPaths("D:/R/R-4.3.1/library")
-
-install.packages("devtools")
-devtools::install_github("wpeterman/ResistanceGA")
 
 # Calling Julia platform in R
 JULIA_HOME <- "D:/software/julia/Julia-1.10.2/bin"
 JuliaCall::julia_setup(JULIA_HOME)
 
+install.packages("devtools")
+devtools::install_github("wpeterman/ResistanceGA")
 library(ResistanceGA)
 library(raster)
 library(parallel)
 library(doParallel)
 library(sf)
 
-# Take three variables as an example. Variables are plotted on the same coordinate system with the same range in ASC format.
+# Variables are plotted on the same coordinate system with an identical range, using the ASC format. 
 elevslop <- raster("D:/inputfile/elev_slop.asc")
 ai <- raster("D:/inputfile/ai.asc")
 bio12 <- raster("D:/inputfile/bio12.asc")
@@ -43,7 +35,7 @@ fst <- read.table("D:/inputfile/popFst.txt", header=T,row.names = 1, stringsAsFa
 cl <- makePSOCKcluster(6)
 registerDoParallel(cl)
 
-#单个图层依次分析，会对每一个图层优化生成阻碍值图层，并且预估每个图层的置信度
+# Each layer is analyzed sequentially to generate an optimized resistance layer and estimate its confidence level.
 write.dir <- "D:/outputfile/SS/"
 jl.inputs <- jl.prep(n.Pops = length(sample.locales),
                      response = fst[lower.tri(fst)],
@@ -61,7 +53,7 @@ GA.inputs <- GA.prep(ASCII.dir = all_surface,
 SS <- SS_optim(jl.inputs = jl.inputs,
                GA.inputs = GA.inputs)
 
-#多个图层联合优化，会评估每个图层的贡献值，生成联合的阻碍值图层
+# Multiple layers are jointly optimized by evaluating each layer's contribution to generate a combined resistance layer.
 write.dir <- "D:/outputfile/MS/"
 jl.inputs <- jl.prep(n.Pops = length(sample.locales),
                      response = fst[lower.tri(fst)],
@@ -79,8 +71,7 @@ GA.inputs <- GA.prep(ASCII.dir = all_surface,
 MS <- MS_optim(jl.inputs = jl.inputs,
                GA.inputs = GA.inputs)
 
-#自由组合单个或多个图层，生成单个或者多个图层的阻碍值图层。自由组合的范围在 max.combination 中设置，max.combination = c(2,3)指的是自由组合环境图层中的2个或者3个图层联合优化。也可以设置为max.combination = 3，意味着将进行单个图层优化，2个图层自由组合联合优化，3个图层自由组合联合优化
-#同时进行bootstrap分析，会给每一个单个图层生成的阻碍图层或多个图层生成的联合阻碍图层的贡献值和可信度排名
+#optimize single layer or combined layers to generate resistance layer. The combianation range is defined in max.combination. Perform bootstrap analysis to rank the contribution and credibility of each resistance layer.
 write.dir <- "D:/outputfile/all_comb/"
 CS.inputs <- jl.prep(n.Pops = length(sample.locales),
                      response = fst[lower.tri(fst)],
@@ -107,11 +98,12 @@ all_comb <- all_comb(jl.inputs = CS.inputs,
                      dist_mod = TRUE,
                      null_mod = TRUE)
 
-#如果需要保存结果，可以先写出
-save(SS,file= "D:/outputfile/SS/Results/SS.rda")
-#再读入结果
-SS<-load("D:/outputfile/SS/Results/SS.rda ")                      
-#如果想单独对单个表面运算结果以及多个表面联合生成的结果进行额外的bootstrap分析
+# Save the result
+save(SS,file = "D:/outputfile/SS/Results/SS.rda")
+save(MS,file = "D:/outputfile/MS/MS.rda")
+save(all.comb,file = "D:/outputfile/all_comb/all_comb.rda")
+                    
+# Conduct additional bootstrap analysis on the combined the SS and MS results.
 mat.list <- c(SS$cd,MS$cd)
 k <- rbind(SS$k,MS$k)
 fst_boots <- fst
@@ -120,7 +112,7 @@ colnames(fst_boots) <- NULL
 rownames(fst_boots) <- NULL
 response <- fst_boots
 
-# Run bootstrap，obs = 18为样点数
+# Run bootstrap, obs = 18 is the populations
 AIC.boots <- Resist.boot(mod.names = names(mat.list),
                          dist.mat = mat.list,
                          n.parameters = k[,2],
