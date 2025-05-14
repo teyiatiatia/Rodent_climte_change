@@ -1,3 +1,65 @@
+# 1. demographic history for each population
+# Randomly extract 90% of the total SNPs from the total SNP data, and repeat 10 vcf file
+for i in {1..10}
+do
+	vcftools --gzvcf ./input_file/snp_limifilter.vcf.gz --positions ./input_file/repeat_pos/SMC_shuf_${i}_2.txt --recode --out ./output_file/SMC_shuf_${i} &&
+	plink --vcf ./output_file/SMC_shuf_${i}.recode.vcf --allow-extra-chr --keep-allele-order --recode vcf-iid --out ./output_file/SMC_shuf_${i}.plink.recoded &&
+	bgzip ./output_file/SMC_shuf_${i}.plink.recoded.vcf && tabix ./output_file/SMC_shuf_${i}.plink.recoded.vcf.gz &&
+	rm ./output_file/SMC_shuf_${i}.recode.vcf	
+done
+
+# Smc file for each population, taking DB as an example. 10 times repeat on 10 vcf files, and each chromosome generates an smc file.
+for i in {1..10}
+do  
+  for j in {1..17}
+  do
+	  docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc --cores 1 ./repeat_file/SMC_shuf_${i}.plink.recoded.vcf.gz ./smc/smc${i}/${j}.smc.gz ${j} DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 &
+  done
+done
+
+# estimate file
+for i in DB ML QH HL NJ
+do
+  cd /home/pub/GEA/SMC/${i}/
+  mkdir estimate
+  cd estimate && mkdir estimate1 estimate2 estimate3 estimate4 estimate5 estimate6 estimate7 estimate8 estimate9 estimate10 && cd .. &&
+  for j in {1..10}
+  do
+	  docker run --rm -v $PWD:/mnt terhorst/smcpp:latest estimate --spline cubic --knots 20 --timepoints 2000 2000000 --cores 2 -o ./estimate/estimate${j}/ 2.19e-9 ./smc/smc${j}/*.smc.gz &
+  done
+done
+
+# plot
+cd /home/pub/GEA/SMC/DB/ && mkdir plot
+docker run --rm -v $PWD:/mnt terhorst/smcpp:latest  plot ./plot/DB_plot.pdf ./estimate/estimate1/model.final.json ./estimate/estimate2/model.final.json ./estimate/estimate3/model.final.json ./estimate/estimate4/model.final.json ./estimate/estimate5/model.final.json ./estimate/estimate6/model.final.json ./estimate/estimate7/model.final.json ./estimate/estimate8/model.final.json ./estimate/estimate9/model.final.json ./estimate/estimate10/model.final.json -g 0.5 --ylim 0 1000000 -c
+
+# 2. split models for population pairs
+# Joint frequency spectrum for DB and ML populations
+cd /home/pub/GEA/SMC/DB_ML/
+for i in {1..10}
+  for j in  {1..17}
+  do
+  	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/${j}_2.smc.gz ${j} ML${i}:NM10232,NM10071,NM21060,NM210206,NEL020,NM10136,BY09068,NM10149,GS22088,NM15091 DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 &
+  done &&
+done
+
+for i in {1..10}
+  for j in  {1..17}
+  do
+  	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/re${j}_2.smc.gz ${j} DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 ML${i}:NM10232,NM10071,NM21060,NM210206,NEL020,NM10136,BY09068,NM10149,GS22088,NM15091 &
+  done &&
+done
+
+# split model for each population pair, taking DB and ML as an example 
+cd /home/pub/GEA/SMC/DB_ML/ && mkdir split && cd split && mkdir split1 split2 split3 split4 split5 split6 split7 split8 split9 split10 && cd /home/pub/GEA/SMC/ &&
+for i in {1..10}
+do
+	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest split --timepoints 1000 1000000 --cores 2 -o ./DB_ML/split/split${i}/ ./DB/estimate/estimate${i}/model.final.json  ./ML/estimate/estimate${i}/model.final.json ./DB_ML/smc/smc${i}/*.smc.gz &
+done
+
+#plot 
+cd /home/pub/TT/imfile/MAR/SMC/SMC_sowerbyi/ML_QH/ && mkdir plot_g1
+docker run --rm -v $PWD:/mnt terhorst/smcpp:latest  plot ./plot/DB_ML_plot.pdf ./split/split1/model.final.json ./split/split2/model.final.json ./split/split3/model.final.json ./split/split4/model.final.json ./split/split5/model.final.json ./split/split6/model.final.json ./split/split7/model.final.json ./split/split8/model.final.json ./split/split9/model.final.json ./split/split10/model.final.json -g 0.5 --ylim 0 10000000 -c
 
 
 
