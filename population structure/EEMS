@@ -1,0 +1,30 @@
+cd /software/eems/runeems_snps/src/
+/runeems_snps --params PR1.ini --seed 123
+
+#example of PR1.ini
+datapath = /home/pub/TT/imfile/MAR/EEMS/input_file/PR1   # The folder where the diffs, outers, and coord files are located.
+mcmcpath = /home/pub/TT/imfile/MAR/EEMS/output_file/PR1   # Output file path
+nIndiv = 79  # The number of sample 
+nSites = 1999999    #The number of SNP
+nDemes = 400    #demes
+diploid = true
+numMCMCIter = 2000000
+numBurnIter = 1000000
+numThinIter = 9999
+
+#plot in R. The new plotting version can be found at https://github.com/dipetkov/reemsplots2.
+library(rEEMSplots)
+mcmcpath = "/home/pub/TT/imfile/MAR/EEMS/output_file/PR1"
+plotpath = "/home/pub/TT/imfile/MAR/EEMS/plot/PR_1/PR"
+eems.plots(mcmcpath, plotpath, longlat = TRUE)
+
+
+
+
+
+
+
+
+
+
+
