@@ -1,0 +1,51 @@
+# Monmonier's algorithm of P. roborovskii
+setwd("D:/R/workdir/workspace/GEA/Monmonier")
+.libPaths("D:/R/R-4.3.1/library")
+library("adegenet")
+library("spdep")
+library(Matrix)
+
+coord<-read.table("D./input_file/pop_coord.txt",stringsAsFactors=F)
+fst<-as.matrix(read.table("./input_file/pop_fst.txt",  stringsAsFactors=F))
+fst_2<-as.dist(fst)
+gab <- chooseCN(coord,ask=FALSE,type=3)
+mon3 <- monmonier(xy=coord, 
+                  dist=fst_2, 
+                  cn=gab,
+                  nrun=3)
+d
+
+#plot
+.libPaths("D:/R/R-4.3.1/library")
+library(raster)
+library(rgdal)
+library(elevatr) 
+library(raster)
+library(tidyverse)
+
+raster_tif <- dir("./input_file/wc2.1_5m_elev/",full.names = T) # Base map is comes from the elevation layer of Worldclim 2 
+tif <- raster(raster_tif[1])
+extent <- c(+70, +130, 28, 52)
+tif.crop <- crop(tif, extent)
+cols2<-c("#fefefe","#f5f5f5",
+         "#ededed","#e0e0e0",
+         "#d7d7d7","#cdcdcd","#c0c0c0",
+         "#b7b7b7","#adadad","#a0a0a0",
+         "#979797","#8d8d8d","#808080",
+         "#777777","#6d6d6d","#606060",
+         "#575757","#4d4d4d","#404040",
+         "#2d2d2d","#202020")
+plot(tif.crop,col=cols2)
+plot(mon3,add.arrows=FALSE,bwd=4,col="red3",add.plot=TRUE) 
+points(coord, cex=2, pch=20)
+
+
+
+
+
+
+
+
+
+
+
