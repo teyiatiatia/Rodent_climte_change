@@ -1,3 +1,4 @@
+# EEMS 
 cd /software/eems/runeems_snps/src/
 /runeems_snps --params PR1.ini --seed 123
 
