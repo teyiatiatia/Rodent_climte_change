@@ -25,7 +25,6 @@ anova(rda,by="term")
 summary(rda)
 
 # RDA plot
-绘图 8：6画幅 输出pdf "D:\R\workdir\workspace\GEA\GEA_GPA_converg\RDA_GEA_GPA\PR\output_file" 
 ii <- summary(rda)
 sp=as.data.frame(ii$species[,1:2])*5 # Extract the variable coordinates and multiply by 5 for aesthetics
 st=as.data.frame(ii$sites[,1:2]) # Extract the sampling coordinates
