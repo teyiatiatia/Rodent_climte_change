@@ -1,5 +1,5 @@
-# Allele frequency mapping of climate-related SNPs
-#1. vcf file
+# Allele frequency and gene structure of climate-related SNPs
+# 1. Allele frequency
 setwd("D:/Ro/GEA/allele_freq/")
 .libPaths("D:/R/R-4.3.1/library")
 library(vcfR)
@@ -56,7 +56,7 @@ ggplot(data_1,aes(x=bio8,y=Chr15_55598786.1))+
   )+geom_point(data = data_1, aes(x = bio8, y =Chr15_55598786.1,color=pop.1),size=5)+theme(legend.position = 'none')
 ggsave("./output_file/bio8_Chr15_55598786.1_SREBF1.pdf",width = 5, height = 5,units = "in") 
 
-#ggplot for gene structure of gene SREBF1
+# 2. ggplot for gene structure of gene SREBF1
 .libPaths("D:/R/R-4.3.1/library")
 setwd("D:/Ro/GEA/allele_freq/gene_struc/")
 library(ggh4x)
@@ -67,14 +67,14 @@ library(GenomicRanges)
 df<-read.table("./input_file/SREBF1_plot.txt",header=F) # This gene annotation information
 df_snp <- read.table("./input_file/SREBF1_plot_snp.txt",header = T) # The annotation information of this SNP
 
-SREBF1<-GRanges("Chr15",IRanges(df$V4,end=df$V5,group=df$V3))
-SREBF1_snp<-data.frame(xmin=unique(df_snp$x_location),
+SREBF1 <- GRanges("Chr15",IRanges(df$V4,end=df$V5,group=df$V3))
+SREBF1_snp <- data.frame(xmin=unique(df_snp$x_location),
                      xmax=unique(df_snp$x_location),
                      ymin=0.6,
                      ymax=1.4)
 
 pdf(file = "./output_file/SREBF1_Chr15_55598786.pdf",width = 10,height = 4)
-autoplot(SREBF1,aes(fill=group),geom="alignment")+
+autoplot(SREBF1,aes(fill = group),geom="alignment")+
   theme_bw()+
   scale_x_continuous(limits = c(55592900,55599000),
                      breaks = c(seq(55592900,55599000,by=3000)),
