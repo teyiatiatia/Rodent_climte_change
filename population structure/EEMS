@@ -1,12 +1,12 @@
 cd /software/eems/runeems_snps/src/
 /runeems_snps --params PR1.ini --seed 123
 
-#example of PR1.ini
+#example of PR1.ini. We repeated the process three times for deme = 400 and 800 respectively and 800 shows good convergence.
 datapath = /home/pub/TT/imfile/MAR/EEMS/input_file/PR1   # The folder where the diffs, outers, and coord files are located.
 mcmcpath = /home/pub/TT/imfile/MAR/EEMS/output_file/PR1   # Output file path
 nIndiv = 79  # The number of sample 
 nSites = 1999999    #The number of SNP
-nDemes = 400    #demes
+nDemes = 800    #demes
 diploid = true
 numMCMCIter = 2000000
 numBurnIter = 1000000
