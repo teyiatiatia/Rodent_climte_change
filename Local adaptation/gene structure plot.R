@@ -1,4 +1,11 @@
 #1. vcf to pop freq
+
+
+
+
+
+
+
 setwd("D:/R/workdir/workspace/GEA/GEA_GPA_converg/allele_freq/PR/")
 .libPaths("D:/R/R-4.3.1/library")
 library(vcfR)
