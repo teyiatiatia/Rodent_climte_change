@@ -37,6 +37,7 @@ docker run --rm -v $PWD:/mnt terhorst/smcpp:latest  plot ./plot/DB_plot.pdf ./es
 # Joint frequency spectrum for DB and ML populations
 cd /home/pub/GEA/SMC/DB_ML/
 for i in {1..10}
+do
   for j in  {1..17}
   do
   	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/${j}_2.smc.gz ${j} ML${i}:NM10232,NM10071,NM21060,NM210206,NEL020,NM10136,BY09068,NM10149,GS22088,NM15091 DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 &
@@ -44,6 +45,7 @@ for i in {1..10}
 done
 
 for i in {1..10}
+do
   for j in  {1..17}
   do
   	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/re${j}_2.smc.gz ${j} DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 ML${i}:NM10232,NM10071,NM21060,NM210206,NEL020,NM10136,BY09068,NM10149,GS22088,NM15091 &
