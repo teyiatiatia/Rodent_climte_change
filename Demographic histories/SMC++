@@ -66,6 +66,3 @@ docker run --rm -v $PWD:/mnt terhorst/smcpp:latest  plot ./plot/DB_ML_plot.pdf .
 
 
 
-
-
-
