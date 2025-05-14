@@ -1,4 +1,4 @@
-# Monmonier's algorithm of P. roborovskii
+# Monmonier's algorithm for P. roborovskii
 setwd("D:/R/workdir/workspace/GEA/Monmonier")
 .libPaths("D:/R/R-4.3.1/library")
 library("adegenet")
