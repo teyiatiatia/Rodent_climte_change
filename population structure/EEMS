@@ -1,5 +1,5 @@
 # EEMS 
-cd /software/eems/runeems_snps/src/
+cd /home/pub/software/eems/runeems_snps/src/
 /runeems_snps --params PR1.ini --seed 123
 
 #example of PR1.ini. We repeated the process three times for deme = 400 and 800 respectively and 800 shows good convergence.
