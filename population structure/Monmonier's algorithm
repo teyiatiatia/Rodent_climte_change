@@ -5,7 +5,7 @@ library("adegenet")
 library("spdep")
 library(Matrix)
 
-coord<-read.table("D./input_file/pop_coord.txt",stringsAsFactors=F)
+coord<-read.table("./input_file/pop_coord.txt",stringsAsFactors=F)
 fst<-as.matrix(read.table("./input_file/pop_fst.txt",  stringsAsFactors=F))
 fst_2<-as.dist(fst)
 gab <- chooseCN(coord,ask=FALSE,type=3)
