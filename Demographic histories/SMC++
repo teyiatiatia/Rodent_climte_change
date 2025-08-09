@@ -13,7 +13,7 @@ for i in {1..10}
 do  
   for j in {1..17}
   do
-	  docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc --cores 1 ./repeat_file/SMC_shuf_${i}.plink.recoded.vcf.gz ./smc/smc${i}/${j}.smc.gz ${j} DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 &
+	  docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc --cores 1 ./repeat_file/SMC_shuf_${i}.plink.recoded.vcf.gz ./smc/smc${i}/${j}.smc.gz ${j} DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006 &
   done
 done
 
@@ -40,7 +40,7 @@ for i in {1..10}
 do
   for j in  {1..17}
   do
-  	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/${j}_2.smc.gz ${j} ML${i}:NM10232,NM10071,NM21060,NM210206,NEL020,NM10136,BY09068,NM10149,GS22088,NM15091 DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 &
+  	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/${j}_2.smc.gz ${j} ML${i}:NEL036,NEL023,NM15098,NM15091,NM15097 DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006 &
   done &&
 done
 
@@ -48,7 +48,7 @@ for i in {1..10}
 do
   for j in  {1..17}
   do
-  	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/re${j}_2.smc.gz ${j} DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006,NM231104,NM231105,NM231106,NM231107 ML${i}:NM10232,NM10071,NM21060,NM210206,NEL020,NM10136,BY09068,NM10149,GS22088,NM15091 &
+  	docker run --rm -v $PWD:/mnt terhorst/smcpp:latest vcf2smc ./repeat_vcf/SMC_shuf_${i}.plink.recoded.vcf.gz --cores 1 ./DB_ML/smc/smc${i}/re${j}_2.smc.gz ${j} DB${i}:TJX011,TJX004,TJX012,JL15002,JL15006 ML${i}:NEL036,NEL023,NM15098,NM15091,NM15097 &
   done &&
 done
 
