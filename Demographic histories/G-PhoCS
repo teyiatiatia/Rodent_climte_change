@@ -199,8 +199,8 @@ ANCESTRAL-POPS-START
 	POP-START
 		name	QHNJ
 		children	QH	NJ 
-		tau-initial	0.0002528  # τ=20000年 × 1.264e-8 = 0.0002528
-		tau-beta	4000       # alpha/beta=1.0/3959.6≈0.0002528	
+		tau-initial	0.0002528  
+		tau-beta	4000       	
 		finetune-tau	0.0000008
 	POP-END
 
