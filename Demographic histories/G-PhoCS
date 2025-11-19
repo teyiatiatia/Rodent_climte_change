@@ -1,1 +1,258 @@
+#G-PhoCS
+#control_file.ctl for P. roborovskii
+GENERAL-INFO-START
 
+	seq-file	/home/pub/TT/imfile/MAR/GPhoCS/PR/input_file/sequence_file/merged_output.gphocs
+	trace-file	/home/pub/TT/imfile/MAR/GPhoCS/PR/input_file/mcmc.log				
+	locus-mut-rate	CONST
+	
+#	burn-in 50000
+	mcmc-iterations	100000
+	iterations-per-log	10
+	logs-per-line	10
+	
+	find-finetunes		FALSE
+	finetune-coal-time	0.01		
+	finetune-mig-time	0.3		
+	finetune-theta		0.04
+	finetune-mig-rate	0.02
+	finetune-tau		0.0000008
+	finetune-mixing		0.003
+#   finetune-locus-rate 0.3
+	
+	tau-theta-alpha	1.0
+	tau-theta-beta	10000.0
+
+	mig-rate-print	0.001
+	mig-rate-alpha	0.002
+	mig-rate-beta	0.00001
+
+GENERAL-INFO-END
+
+CURRENT-POPS-START	
+             
+	POP-START
+		name	DB
+		samples	TJX011	d	JL15002	d	NM231106	d
+	POP-END
+
+	POP-START
+		name	ML
+		samples	NM10071	d	NM10072	d	NM10082	d
+	POP-END
+
+	POP-START
+		name	QH
+		samples	QH22114	d	QH22098	d	QH23171	d
+	POP-END
+
+	POP-START
+		name	HL
+		samples	NM18229	d	GZ18222	d	GZ18225	d
+	POP-END
+	
+	POP-START
+		name	NJ
+		samples	XJ22142	d	XJ22145	d	XJ22146	d
+	POP-END
+	
+CURRENT-POPS-END
+
+ANCESTRAL-POPS-START
+
+	POP-START
+		name	HLNJ
+		children	HL	NJ
+		tau-initial	0.0000219
+		tau-beta	45683.5	
+		finetune-tau	0.0000008
+	POP-END
+
+	POP-START
+		name	HLNJQH
+		children	HLNJ	QH
+		tau-initial	0.0000438
+		tau-beta	22841.8	
+		finetune-tau	0.0000008
+	POP-END
+
+	POP-START
+		name	HLNJQHML
+		children	HLNJQH	ML
+		tau-initial	0.0000657
+		tau-beta	15220.7	
+		finetune-tau	0.0000008
+	POP-END
+	
+	POP-START
+		name	root
+		children	HLNJQHML	DB
+		tau-initial	0.000657
+		tau-beta	1522.1	
+		finetune-tau	0.00000286
+	POP-END
+
+ANCESTRAL-POPS-END
+
+MIG-BANDS-START	
+	BAND-START		
+       source	ML
+       target	QH
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	QH
+       target	HL
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	QH
+       target	NJ
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	QH
+       target	ML
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	HL
+       target	QH
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	NJ
+       target	QH
+       mig-rate-print	0.1
+	BAND-END
+
+MIG-BANDS-END
+
+
+##----------------------------------
+#control_file.ctl for D. sowerbyi
+GENERAL-INFO-START
+
+	seq-file	/home/pub/TT/imfile/MAR/GPhoCS/DS/input_file/sequence_file/merged_output.gphocs
+	trace-file	/home/pub/TT/imfile/MAR/GPhoCS/DS/input_file/mcmc.log				
+	locus-mut-rate	CONST
+	
+#	burn-in 50000
+	mcmc-iterations	100000
+	iterations-per-log	10
+	logs-per-line	10
+	
+	find-finetunes		FALSE
+	finetune-coal-time	0.01		
+	finetune-mig-time	0.3		
+	finetune-theta		0.04
+	finetune-mig-rate	0.02
+	finetune-tau		0.0000008
+	finetune-mixing		0.003
+    finetune-locus-rate 0.3
+	
+	tau-theta-alpha	1.0
+	tau-theta-beta	1000.0
+
+	mig-rate-print	0.001
+	mig-rate-alpha	0.002
+	mig-rate-beta	0.00001
+
+GENERAL-INFO-END
+
+CURRENT-POPS-START	
+             
+	POP-START
+		name	DB
+		samples	DB10	d	DB11	d	DB12	d
+	POP-END
+
+	POP-START
+		name	EL
+		samples	NMN7	d	NMN19	d	NMN20	d
+	POP-END
+
+	POP-START
+		name	ML
+		samples	NMC7	d	NMC8	d	NMC9	d
+	POP-END
+
+	POP-START
+		name	QH
+		samples	QH6	d	QH7	d	QH22	d
+	POP-END
+	
+	POP-START
+		name	NJ
+		samples	XC1	d	XC3	d	XC6	d
+	POP-END
+	
+CURRENT-POPS-END
+
+ANCESTRAL-POPS-START
+
+	POP-START
+		name	QHNJ
+		children	QH	NJ 
+		tau-initial	0.0002528  # τ=20000年 × 1.264e-8 = 0.0002528
+		tau-beta	4000       # alpha/beta=1.0/3959.6≈0.0002528	
+		finetune-tau	0.0000008
+	POP-END
+
+	POP-START
+		name	QHNJML
+		children	QHNJ	ML
+		tau-initial	0.0002528
+		tau-beta	4000	
+		finetune-tau	0.0000008
+	POP-END
+
+	POP-START
+		name	QHNJMLEL
+		children	QHNJML	EL
+		tau-initial	0.000632
+		tau-beta	2000	
+		finetune-tau	0.0000008
+	POP-END
+	
+	POP-START
+		name	root
+		children	QHNJMLEL	DB
+		tau-initial	0.000632
+		tau-beta	2000	
+		finetune-tau	0.00000286
+	POP-END
+
+ANCESTRAL-POPS-END
+
+MIG-BANDS-START	
+	BAND-START		
+       source	DB
+       target	ML
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	ML
+       target	DB
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	EL
+       target	ML
+       mig-rate-print	0.1
+	BAND-END
+	
+	BAND-START		
+       source	ML
+       target	EL
+       mig-rate-print	0.1
+	BAND-END
+	
+MIG-BANDS-END
