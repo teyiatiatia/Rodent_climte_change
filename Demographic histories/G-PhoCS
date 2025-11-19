@@ -7,7 +7,7 @@ GENERAL-INFO-START
 	locus-mut-rate	CONST
 	
 #	burn-in 50000
-	mcmc-iterations	100000
+	mcmc-iterations	1000000
 	iterations-per-log	10
 	logs-per-line	10
 	
@@ -143,7 +143,7 @@ GENERAL-INFO-START
 	locus-mut-rate	CONST
 	
 #	burn-in 50000
-	mcmc-iterations	100000
+	mcmc-iterations	1000000
 	iterations-per-log	10
 	logs-per-line	10
 	
